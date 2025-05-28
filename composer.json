@@ -1,6 +1,6 @@
 {
-    "name": "dacastro4/laravel-gmail",
-    "description": "Gmail API package for Laravel",
+    "name": "romaxa83/laravel-gmail",
+    "description": "Fork of dacastro4/laravel-gmail with bug fixes for handling exceptions in batchRequest",
     "keywords": [
         "api",
         "laravel",
@@ -31,6 +31,9 @@
         "mockery/mockery": "^1.0",
         "squizlabs/php_codesniffer": "~3.4",
         "orchestra/testbench": "^v4.18.0|^v5.20.0|^v6.25.0|^8.0"
+    },
+    "replace": {
+        "dacastro4/laravel-gmail": "self.version"
     },
     "autoload": {
         "psr-4": {

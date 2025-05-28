@@ -129,28 +129,38 @@ class Message
 	 *
 	 * @return array|null
 	 */
-	public function batchRequest($allMessages)
-	{
-		$this->client->setUseBatch(true);
+    public function batchRequest($allMessages)
+    {
+        $this->client->setUseBatch(true);
 
-		$batch = $this->service->createBatch();
+        $batch = $this->service->createBatch();
 
-		foreach ($allMessages as $key => $message) {
-			$batch->add($this->getRequest($message->getId()), $key);
-		}
+        foreach ($allMessages as $key => $message) {
+            // Пропускаем сообщение, если это исключение или не является экземпляром Google_Service_Gmail_Message
+            if ($message instanceof \Exception || !method_exists($message, 'getId')) {
+                continue;
+            }
 
-		$messagesBatch = $batch->execute();
+            $batch->add($this->getRequest($message->getId()), $key);
+        }
 
-		$this->client->setUseBatch(false);
+        $messagesBatch = $batch->execute();
 
-		$messages = [];
+        $this->client->setUseBatch(false);
 
-		foreach ($messagesBatch as $message) {
-			$messages[] = new Mail($message, false, $this->client->userId);
-		}
+        $messages = [];
 
-		return $messages;
-	}
+        foreach ($messagesBatch as $message) {
+            // Пропускаем, если это не объект Google_Service_Gmail_Message
+            if (!($message instanceof \Google_Service_Gmail_Message)) {
+                continue;
+            }
+
+            $messages[] = new Mail($message, false, $this->client->userId);
+        }
+
+        return $messages;
+    }
 
 	/**
 	 * Preload the information on each Mail objects.
